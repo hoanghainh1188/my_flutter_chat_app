@@ -17,6 +17,7 @@ Future<void> main() async {
       measurementId: "G-4L2W27FJ17",
     ),
   );
+  // アプリ起動
   runApp(const ChatApp());
 }
 
