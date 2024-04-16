@@ -21,54 +21,62 @@ class _AddPostPageState extends State<AddPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('チャット投稿'),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // 投稿メッセージの入力
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: '投稿メッセージ',
-              ),
-              // 複数行のテキスト入力
-              keyboardType: TextInputType.multiline,
-              // 最大3行
-              maxLines: 3,
-              onChanged: (String value) {
-                setState(() {
-                  messageText = value;
-                });
-              },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('チャット投稿'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // 投稿メッセージの入力
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: '投稿メッセージ',
+                  ),
+                  // 複数行のテキスト入力
+                  keyboardType: TextInputType.multiline,
+                  // 最大3行
+                  maxLines: 3,
+                  onChanged: (String value) {
+                    setState(() {
+                      messageText = value;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    child: const Text('投稿'),
+                    onPressed: () async {
+                      // 現在の日時を取得
+                      final date = DateTime.now().toIso8601String();
+                      // 現在のユーザーを取得
+                      final email = widget.user.email;
+                      // 投稿メッセージ用ドキュメント作成
+                      await FirebaseFirestore.instance
+                          .collection('posts')
+                          .doc()
+                          .set({
+                        'text': messageText,
+                        'email': email,
+                        'date': date
+                      });
+                      // 1つ前の画面に戻る
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                child: const Text('投稿'),
-                onPressed: () async {
-                  // 現在の日時を取得
-                  final date = DateTime.now().toIso8601String();
-                  // 現在のユーザーを取得
-                  final email = widget.user.email;
-                  // 投稿メッセージ用ドキュメント作成
-                  await FirebaseFirestore.instance
-                      .collection('posts')
-                      .doc()
-                      .set({'text': messageText, 'email': email, 'date': date});
-                  // 1つ前の画面に戻る
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

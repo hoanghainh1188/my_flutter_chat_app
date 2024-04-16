@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_chat_app/chat/chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 // ログイン画面用Widget
 class LoginPage extends StatefulWidget {
@@ -22,93 +21,98 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // メールアドレスの入力
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'メールアドレス'),
-                onChanged: (String value) {
-                  setState(() {
-                    email = value;
-                  });
-                },
-              ),
-              // パスワードの入力
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'パスワード'),
-                onChanged: (value) {
-                  setState(() {
-                    password = value;
-                  });
-                },
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                child: Text(infoText),
-              ),
-              Container(
-                width: double.infinity,
-                // ユーザー登録ボタン
-                child: ElevatedButton(
-                  child: const Text('ユーザー登録'),
-                  onPressed: () async {
-                    try {
-                      final FirebaseAuth auth = FirebaseAuth.instance;
-                      final result = await auth.createUserWithEmailAndPassword(
-                          email: email, password: password);
-                      // ユーザー登録に成功した場合
-                      // チャット画面に遷移し、ログインを破棄
-                      // ignore: use_build_context_synchronously
-                      await Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) {
-                          return ChatPage(result.user);
-                        }),
-                      );
-                    } catch (e) {
-                      // ユーザー登録に失敗した場合
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // メールアドレスの入力
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'メールアドレス'),
+                    onChanged: (String value) {
                       setState(() {
-                        infoText = "登録に失敗しました：${e.toString()}";
+                        email = value;
                       });
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Container(
-                width: double.infinity,
-                // ログインボタン
-                child: OutlinedButton(
-                  onPressed: () async {
-                    try {
-                      // メールアドレスとパスワードでログイン
-                      final FirebaseAuth auth = FirebaseAuth.instance;
-                      final result = await auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                      // ログインに成功した場合
-                      // チャット画面に遷移し、ログイン画面を破棄
-                      // ignore: use_build_context_synchronously
-                      await Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) {
-                          return ChatPage(result.user);
-                        }),
-                      );
-                    } catch (e) {
-                      // ログインに失敗した場合
+                    },
+                  ),
+                  // パスワードの入力
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'パスワード'),
+                    onChanged: (value) {
                       setState(() {
-                        infoText = "ログインに失敗しました：${e.toString()}";
+                        password = value;
                       });
-                    }
-                  },
-                  child: const Text('ログイン')),
+                    },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(infoText),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    // ユーザー登録ボタン
+                    child: ElevatedButton(
+                      child: const Text('ユーザー登録'),
+                      onPressed: () async {
+                        try {
+                          final FirebaseAuth auth = FirebaseAuth.instance;
+                          final result =
+                              await auth.createUserWithEmailAndPassword(
+                                  email: email, password: password);
+                          // ユーザー登録に成功した場合
+                          // チャット画面に遷移し、ログインを破棄
+                          // ignore: use_build_context_synchronously
+                          await Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) {
+                              return ChatPage(result.user);
+                            }),
+                          );
+                        } catch (e) {
+                          // ユーザー登録に失敗した場合
+                          setState(() {
+                            infoText = "登録に失敗しました：${e.toString()}";
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    // ログインボタン
+                    child: OutlinedButton(
+                        onPressed: () async {
+                          try {
+                            // メールアドレスとパスワードでログイン
+                            final FirebaseAuth auth = FirebaseAuth.instance;
+                            final result = await auth.signInWithEmailAndPassword(
+                                email: email, password: password);
+                            // ログインに成功した場合
+                            // チャット画面に遷移し、ログイン画面を破棄
+                            // ignore: use_build_context_synchronously
+                            await Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) {
+                                return ChatPage(result.user);
+                              }),
+                            );
+                          } catch (e) {
+                            // ログインに失敗した場合
+                            setState(() {
+                              infoText = "ログインに失敗しました：${e.toString()}";
+                            });
+                          }
+                        },
+                        child: const Text('ログイン')),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
