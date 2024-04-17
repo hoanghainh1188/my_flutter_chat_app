@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_flutter_chat_app/app.dart';
-import 'package:my_flutter_chat_app/misc/list_orders.dart';
 
 Future<void> main() async {
   // Firebase初期化
@@ -21,6 +20,6 @@ Future<void> main() async {
   // アプリ起動
   // Riverpodでデータを受け渡しできる状態にする
   runApp(
-    ProviderScope(child: ChatApp()),
+    const ProviderScope(child: ChatApp()),
   );
 }
